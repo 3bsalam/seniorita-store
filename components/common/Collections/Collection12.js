@@ -9,33 +9,32 @@ import ProductBox from "../product-box/ProductBox9";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 
 const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
+query products($category_id: ID!) {
+  products(where: { category:{id_eq: $category_id}}) {
+      id
+      title
+      description
+      brand
+      category{
         title
-        description
-        type
-        brand
-        category
-        price
-        new
-        sale
-        stock
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
       }
     }
   }
@@ -58,6 +57,7 @@ const ProductsCollection = ({ type, col }) => {
       type: type,
       indexFrom: 0,
       limit: 20,
+      category_id: 1
     },
   });
 
@@ -75,7 +75,7 @@ const ProductsCollection = ({ type, col }) => {
             }`}
           >
             {data &&
-              data.products.items
+              data.products
                 .slice(0, 20)
                 .map((product, index) => (
                   <ProductBox

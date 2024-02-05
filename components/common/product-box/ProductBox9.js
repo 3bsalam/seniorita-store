@@ -19,6 +19,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
   const quantity = cartContext.quantity;
   const setQuantity = cartContext.setQuantity;
   const uniqueTags = [];
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
 
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
@@ -35,7 +36,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
         <div className="front" onClick={clickProductDetail}>
           <a href="#!">
             <Media
-              src={product.images[0].src}
+              src={`${strapiBaseUrl}${product.images[0].url}`}
               className="img-fluid blur-up lazyload"
               alt=""
             />
