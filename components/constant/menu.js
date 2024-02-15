@@ -1,65 +1,8 @@
 export const MENUITEMS = [
   {
     title: "Home",
-    type: "sub",
-    children: [
-      {
-        title: "New Demos",
-        type: "sub",
-        tag: "new",
-        children: [
-          { path: "/layouts/Tools", title: "Tools", type: "link" },
-          { path: "/layouts/Christmas", title: "Christmas", type: "link" },
-          { path: "/layouts/Marketplace", title: "Marketplace", type: "link" },
-          { path: "/layouts/Game", title: "Game", type: "link" },
-          { path: "/layouts/Gym", title: "Gym", type: "link" },
-          { path: "/layouts/Marijuana", title: "Marijuana", type: "link" },
-          { path: "/layouts/Leftsidebar", title: "Left-Sidebar", type: "link" },
-          { path: "/layouts/Jewellery", title: "Jewellery", type: "link" },
-          { path: "/layouts/Pets", title: "Pets", type: "link" },
-          { path: "/layouts/Metros", title: "Metros", type: "link" },
-          { path: "/layouts/Vedioslider", title: "Video-Slider", type: "link" },
-          { path: "/layouts/Nursery", title: "Nursery", type: "link" },
-        ],
-      },
-      {
-        title: "Clothing",
-        type: "sub",
-        children: [
-          { path: "/", title: "Fashion1", type: "link" },
-          { path: "/layouts/Fashion2", title: "Fashion2", type: "link" },
-          { path: "/layouts/Fashion3", title: "Fashion3", type: "link" },
-          { path: "/layouts/Kids", title: "Kids", type: "link" },
-        ],
-      },
-      {
-        title: "Basics",
-        type: "sub",
-        children: [
-          { path: "/layouts/Basics/Lookbook", title: "Lookbook", type: "link" },
-          { path: "/layouts/Basics/Video", title: "Video", type: "link" },
-          { path: "/layouts/Basics/Parallax", title: "Parallax", type: "link" },
-          { path: "/layouts/Basics/Fullpage", title: "Full Page", type: "link" },
-        ],
-      },
-      { path: "/layouts/Beauty", title: "Beauty", type: "link" },
-      {
-        title: "electronic",
-        type: "sub",
-        children: [
-          { path: "/layouts/Electronic/Electronic-1", title: "Electronic-1", type: "link" },
-          { path: "/layouts/Electronic/Electronic-2", title: "Electronic-2", type: "link" },
-        ],
-      },
-      { path: "/layouts/Furniture", title: "Furniture", type: "link" },
-      { path: "/layouts/Vegetables", title: "Vegetables", type: "link" },
-      { path: "/layouts/Watch", title: "Watch", type: "link" },
-      { path: "/layouts/Lights", title: "Lights", type: "link" },
-      { path: "/layouts/Goggles", title: "Goggles", type: "link" },
-      { path: "/layouts/Shoes", title: "Shoes", type: "link" },
-      { path: "/layouts/Bags", title: "Bags", type: "link" },
-      { path: "/layouts/Flowers", title: "Flowers", type: "link" },
-    ],
+    type: "link",
+    path: "/",
   },
   {
     title: "Shop",
@@ -77,7 +20,7 @@ export const MENUITEMS = [
     ],
   },
   {
-    title: "Products",
+    title: "Categories",
     type: "sub",
     children: [
       {

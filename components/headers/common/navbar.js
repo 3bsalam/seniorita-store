@@ -1,63 +1,115 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { MENUITEMS } from "../../constant/menu";
-import { Container, Row } from "reactstrap";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
+import { useQuery, gql } from '@apollo/client';
+import { Container, Row } from "reactstrap";
+import { MENUITEMS } from "../../constant/menu";
+
+// Define your GraphQL query
+const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories {
+      id
+      title
+      image {
+        url
+      }
+    }
+  }
+`;
 
 const NavBar = () => {
   const { t } = useTranslation();
-  const [navClose, setNavClose] = useState({ right: "0px" });
   const router = useRouter();
+  const { loading, error, data } = useQuery(GET_CATEGORIES, {
+    variables: {
+    }});
+  const [navClose, setNavClose] = useState({ right: "0px" });
+
+  // Handle loading and error states
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading categories...');
+    }
+    if (error) {
+      console.error('Error fetching categories:', error.message);
+    }
+    if (data) {
+      console.log('Fetched categories:', data);
+    }
+  }, [loading, error, data]);
+
+  // Extract the categories from the data
+  const categories = data?.categories || [];
+
+  // Replace the hardcoded categories in your MENUITEMS with the fetched categories
+  const updatedMenu = [...MENUITEMS];
+  const categoriesIndex = updatedMenu.findIndex(item => item.title === 'Categories');
+  
+  if (categoriesIndex !== -1) {
+    updatedMenu[categoriesIndex] = {
+      title: "Categories",
+      type: "sub",
+      children: categories.map(category => ({
+        title: category.title,
+        type: "link",
+        path: `/categories/${category.id}`,
+      })),
+    };
+  }
 
   useEffect(() => {
-    if (window.innerWidth < 750) {
-      setNavClose({ right: "-410px" });
-    }
-    if (window.innerWidth < 1199) {
-      setNavClose({ right: "-300px" });
-    }
+    const handleResize = () => {
+      if (window.innerWidth < 750) {
+        setNavClose({ right: "-410px" });
+      }
+      if (window.innerWidth < 1199) {
+        setNavClose({ right: "-300px" });
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const openNav = () => {
     setNavClose({ right: "0px" });
-    if (router.asPath == "/layouts/Gym")
+    if (router.asPath === "/layouts/Gym") {
       document.querySelector("#topHeader").classList.add("zindex-class");
+    }
   };
 
   const closeNav = () => {
     setNavClose({ right: "-410px" });
-    if (router.asPath == "/layouts/Gym")
+    if (router.asPath === "/layouts/Gym") {
       document.querySelector("#topHeader").classList.remove("zindex-class");
+    }
   };
-  // eslint-disable-next-line
 
   const handleMegaSubmenu = (event) => {
     if (event.target.classList.contains("sub-arrow")) return;
 
-    if (
-      event.target.parentNode.nextElementSibling.classList.contains(
-        "opensubmegamenu"
-      )
-    )
-      event.target.parentNode.nextElementSibling.classList.remove(
-        "opensubmegamenu"
-      );
-    else {
-      document.querySelectorAll(".menu-content").forEach(function (value) {
-        value.classList.remove("opensubmegamenu");
-      });
-      event.target.parentNode.nextElementSibling.classList.add(
-        "opensubmegamenu"
-      );
+    const submenu = event.target.parentNode.nextElementSibling;
+    const isOpen = submenu.classList.contains("opensubmegamenu");
+
+    document.querySelectorAll(".menu-content").forEach((value) => {
+      value.classList.remove("opensubmegamenu");
+    });
+
+    if (!isOpen) {
+      submenu.classList.add("opensubmegamenu");
     }
   };
 
   const [mainmenu, setMainMenu] = useState(MENUITEMS);
 
   useEffect(() => {
-    const currentUrl = location.pathname;
-    MENUITEMS.filter((items) => {
+    const currentUrl = router.asPath;
+    updatedMenu.filter((items) => {
       if (items.path === currentUrl) setNavActive(items);
       if (!items.children) return false;
       items.children.filter((subItems) => {
@@ -68,11 +120,11 @@ const NavBar = () => {
         });
       });
     });
-  }, []);
+  }, [router.asPath]);
 
-  const setNavActive = (item) => {
-    MENUITEMS.filter((menuItem) => {
-      if (menuItem != item) menuItem.active = false;
+  const setNavActive = (item, categories) => {
+    updatedMenu.filter((menuItem) => {
+      if (menuItem !== item) menuItem.active = false;
       if (menuItem.children && menuItem.children.includes(item))
         menuItem.active = true;
       if (menuItem.children) {
@@ -85,14 +137,14 @@ const NavBar = () => {
       }
     });
 
-    setMainMenu({ mainmenu: MENUITEMS });
+    setMainMenu(updatedMenu);
   };
 
   // Click Toggle menu
   const toggletNavActive = (item) => {
     if (!item.active) {
-      MENUITEMS.forEach((a) => {
-        if (MENUITEMS.includes(item)) a.active = false;
+      updatedMenu.forEach((a) => {
+        if (updatedMenu.includes(item)) a.active = false;
         if (!a.children) return false;
         a.children.forEach((b) => {
           if (a.children.includes(item)) {
@@ -108,7 +160,7 @@ const NavBar = () => {
       });
     }
     item.active = !item.active;
-    setMainMenu({ mainmenu: MENUITEMS });
+    setMainMenu(updatedMenu);
   };
 
   const openMblNav = (event) => {
@@ -141,16 +193,14 @@ const NavBar = () => {
                 <i className="fa fa-angle-right ps-2" aria-hidden="true"></i>
               </div>
             </li>
-            {MENUITEMS.map((menuItem, i) => {
+            {updatedMenu.map((menuItem, i) => {
               return (
                 <li
                   key={i}
                   className={` ${menuItem.megaMenu ? "mega-menu" : ""}`}>
                   {menuItem.type == "link" ? (
                     <Link href={menuItem.path} className="nav-link">
-                      {/* <a > */}
                       {t(menuItem.title)}
-                      {/* </a> */}
                     </Link>
                   ) : (
                     <a className="nav-link" onClick={(e) => openMblNav(e)}>
@@ -172,10 +222,8 @@ const NavBar = () => {
                                 href={null}
                                 onClick={() => toggletNavActive(childrenItem)}>
                                 {childrenItem.title}
-                                {childrenItem.tag === "new" ? (
+                                {childrenItem.tag === "new" && (
                                   <span className="new-tag">new</span>
-                                ) : (
-                                  ""
                                 )}
                                 <i className="fa fa-angle-right ps-2"></i>
                               </a>
@@ -184,14 +232,10 @@ const NavBar = () => {
                             )}
                             {childrenItem.type === "link" ? (
                               <Link href={`${childrenItem.path}`}>
-                                {/* <a> */}
                                 {childrenItem.title}
-                                {childrenItem.tag === "new" ? (
+                                {childrenItem.tag === "new" && (
                                   <span className="new-tag">new</span>
-                                ) : (
-                                  ""
                                 )}
-                                {/* </a> */}
                               </Link>
                             ) : (
                               ""
@@ -208,14 +252,10 @@ const NavBar = () => {
                                         <Link
                                           href={childrenSubItem.path}
                                           className="sub-menu-title">
-                                          {/* <a > */}
                                           {childrenSubItem.title}
-                                          {childrenSubItem.tag === "new" ? (
+                                          {childrenSubItem.tag === "new" && (
                                             <span className="new-tag">new</span>
-                                          ) : (
-                                            ""
                                           )}
-                                          {/* </a> */}
                                         </Link>
                                       ) : (
                                         ""
