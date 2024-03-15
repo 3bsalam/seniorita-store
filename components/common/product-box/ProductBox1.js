@@ -5,6 +5,7 @@ import { Row, Col, Media, Modal, ModalBody, ModalHeader } from "reactstrap";
 import CartContext from "../../../helpers/cart";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import MasterProductDetail from "./MasterProductDetail";
+import i18next from "../../constant/i18n";
 
 const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass, productDetail, addCompare, title }) => {
   // eslint-disable-next-line
@@ -16,6 +17,8 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
   const minusQty = cartContext.minusQty;
   const quantity = cartContext.quantity;
   const setQuantity = cartContext.setQuantity;
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
+  const selectedLanguage = i18next.language;
 
   const [image, setImage] = useState("");
   const [modal, setModal] = useState(false);
@@ -33,14 +36,14 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
   };
 
   const clickProductDetail = () => {
-    const titleProps = product.title.split(" ").join("");
+    const titleProps =  product.title.split(" ").join("");
     router.push(`/product-details/${product.id}` + "-" + `${titleProps}`);
   };
 
   const variantChangeByColor = (imgId, product_images) => {
     product_images.map((data) => {
       if (data.image_id == imgId) {
-        setImage(data.src);
+        setImage(data.url);
       }
     });
   };
@@ -52,14 +55,14 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
           {product.sale === true ? <span className="lable4">on sale</span> : ""}
         </div>
         <div className="front" onClick={clickProductDetail}>
-          <Media src={`${image ? image : product.images[0].src}`} className="img-fluid" alt="" />
+          <Media src={`${image ? image : (strapiBaseUrl + product.images[0].url)}`} className="img-fluid" alt="" />
         </div>
         {backImage ? (
           product.images[1] === "undefined" ? (
             "false"
           ) : (
             <div className="back" onClick={clickProductDetail}>
-              <Media src={`${image ? image : product.images[1].src}`} className="img-fluid m-auto" alt="" />
+              <Media src={`${image ? image : (strapiBaseUrl + product.images[1].url)}`} className="img-fluid m-auto" alt="" />
             </div>
           )
         ) : (
@@ -84,10 +87,10 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
               <Row className="compare-modal">
                 <Col lg="12">
                   <div className="media">
-                    <Media src={`${product.variants && image ? image : product.images[0].src}`} alt="" className="img-fluid" />
+                    <Media src={`${product.variants && image ? image : (strapiBaseUrl + product.images[0].url)}`} alt="" className="img-fluid" />
                     <div className="media-body align-self-center text-center">
                       <h5>
-                        <i className="fa fa-check"></i>Item <span>{product.title} </span>
+                        <i className="fa fa-check"></i>Item <span>{selectedLanguage == 'en' ? product.title : product.title_ar} </span>
                         <span> successfully added to your Compare list</span>
                       </h5>
                       <div className="buttons d-flex justify-content-center">
@@ -109,7 +112,7 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
             {product.images.map((img, i) => (
               <li className={`grid_thumb_img ${img.src === image ? "active" : ""}`} key={i}>
                 <a href={null} title="Add to Wishlist">
-                  <Media src={`${img.src}`} alt="wishlist" onClick={() => onClickHandle(img.src)} />
+                  <Media src={`${(strapiBaseUrl + img.url)}`} alt="wishlist" onClick={() => onClickHandle(strapiBaseUrl +img.url)} />
                 </a>
               </li>
             ))}
@@ -124,13 +127,13 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
           <Row>
             <Col lg="6" xs="12">
               <div className="quick-view-img">
-                <Media src={`${product.variants && image ? image : product.images[0].src}`} alt="" className="img-fluid" />
+                <Media src={`${product.variants && image ? image : (strapiBaseUrl + product.images[0].url)}`} alt="" className="img-fluid" />
               </div>
             </Col>
             <Col lg="6" className="rtl-text">
               <div className="product-right">
                 <button type="button" data-dismiss="modal" className="btn-close btn btn-secondary" aria-label="Close" onClick={toggle}></button>
-                <h2> {product.title} </h2>
+                <h2> {selectedLanguage == 'en' ? product.title : product.title_ar} </h2>
                 <h3>
                   {currency.symbol}
                   {(product.price * currency.value).toFixed(2)}
@@ -158,7 +161,7 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
                 )}
                 <div className="border-product">
                   <h6 className="product-title">product details</h6>
-                  <p>{product.description}</p>
+                  <p>{(selectedLanguage == 'en') ? product.description : product.description_ar}</p>
                 </div>
                 <div className="product-description border-product">
                   {product.size ? (

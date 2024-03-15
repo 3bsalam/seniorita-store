@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useQuery, gql } from '@apollo/client';
 import { Container, Row } from "reactstrap";
 import { MENUITEMS } from "../../constant/menu";
+import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
+import i18next from "../../constant/i18n";
+
 
 // Define your GraphQL query
 const GET_CATEGORIES = gql`
@@ -12,6 +15,7 @@ const GET_CATEGORIES = gql`
     categories {
       id
       title
+      title_ar
       image {
         url
       }
@@ -22,8 +26,10 @@ const GET_CATEGORIES = gql`
 const NavBar = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const selectedLanguage = i18next.language;
   const { loading, error, data } = useQuery(GET_CATEGORIES, {
     variables: {
+      language: selectedLanguage
     }});
   const [navClose, setNavClose] = useState({ right: "0px" });
 
@@ -40,6 +46,7 @@ const NavBar = () => {
     }
   }, [loading, error, data]);
 
+
   // Extract the categories from the data
   const categories = data?.categories || [];
 
@@ -52,7 +59,7 @@ const NavBar = () => {
       title: "Categories",
       type: "sub",
       children: categories.map(category => ({
-        title: category.title,
+        title: (selectedLanguage == 'en') ? category.title : category.title_ar ,
         type: "link",
         path: `/categories/${category.id}`,
       })),

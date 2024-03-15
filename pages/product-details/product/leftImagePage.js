@@ -6,48 +6,57 @@ import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client";
 import CartContext from "../../../helpers/cart";
 import ImageZoom from "../common/image-zoom";
+import { useRouter } from 'next/router'
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 
 const GET_SINGLE_PRODUCTS = gql`
-  query product($id: Int!) {
-    product(id: $id) {
+query products($id: ID!) {
+  product(id: $id) {
       id
       title
+      title_ar
       description
-      type
+      description_ar
       brand
-      category
+      category{
+        title
+        id
+      }
       price
       new
+      stock
       sale
       discount
-      stock
       variants {
         id
+        sku
+        size
         color
         image_id
-        variant_id
-        size
       }
       images {
-        image_id
-        src
+        url
+        id
+        previewUrl
       }
     }
   }
 `;
 
-const LeftImagePage = () => {
+
+const LeftImagePage = (props) => {
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
   const context = useContext(CartContext);
   const addToCart = context.addToCart;
   const curContext = useContext(CurrencyContext);
+  const router = useRouter()
   const symbol = curContext.state.symbol;
   const [state, setState] = useState({ nav1: null, nav2: null });
   const slider1 = useRef();
   const slider2 = useRef();
   var { loading, data } = useQuery(GET_SINGLE_PRODUCTS, {
     variables: {
-      id: 1,
+      id: props.product_id,
     },
   });
   var products = {
@@ -92,10 +101,10 @@ const LeftImagePage = () => {
               <Col lg="1" sm="2" xs="12" className="order-down">
                 <Row>
                   <Slider className="slider-nav" {...productsnav} asNavFor={nav1} ref={(slider) => (slider2.current = slider)}>
-                    {data.product.variants
+                    {data.product.images.length > 0
                       ? data.product.images.map((vari, index) => (
                           <div key={index}>
-                            <Media src={`${vari.src}`} key={index} alt={vari.alt} className="img-fluid" />
+                            <Media src={`${strapiBaseUrl}${vari.url}`} key={index} className="img-fluid" />
                           </div>
                         ))
                       : ""}

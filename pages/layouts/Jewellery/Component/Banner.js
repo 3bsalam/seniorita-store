@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import Slider from "react-slick";
-import MasterBanner from "../../Fashion/Components/MasterBanner";
+import MasterBanner from "/root/seniorita_store/frontend/temp layouts/Fashion/Components/MasterBanner.js";
 
 const Data = [
   {

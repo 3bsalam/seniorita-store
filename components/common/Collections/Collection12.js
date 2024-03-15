@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { Container } from "reactstrap";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
@@ -7,13 +7,16 @@ import Masonry from "react-masonry-css";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import ProductBox from "../product-box/ProductBox9";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
+import i18next from "../../../components/constant/i18n";
 
 const GET_PRODUCTS = gql`
 query products($category_id: ID!) {
   products(where: { category:{id_eq: $category_id}}) {
       id
       title
+      title_ar
       description
+      description_ar
       brand
       category{
         title
@@ -40,11 +43,12 @@ query products($category_id: ID!) {
   }
 `;
 
-const ProductsCollection = ({ type, col }) => {
+const ProductsCollection = ({ type, col, category_id }) => {
   const cartContext = useContext(CartContext);
   const wishlistContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
   const quantity = cartContext.quantity;
+  const selectedLanguage = i18next.language
   const breakpointColumnsObj = {
     default: 4,
     1199: 3,
@@ -57,9 +61,16 @@ const ProductsCollection = ({ type, col }) => {
       type: type,
       indexFrom: 0,
       limit: 20,
-      category_id: 1
+      category_id: category_id
     },
   });
+  useEffect(() => {
+
+    if (data) {
+      console.log('Fetched products:', data);
+    }
+  }, [data]);
+
 
   return (
     <Fragment>
@@ -80,6 +91,7 @@ const ProductsCollection = ({ type, col }) => {
                 .map((product, index) => (
                   <ProductBox
                     product={product}
+                    category={category_id}
                     addCart={() => cartContext.addToCart(product, quantity)}
                     addWish={() => wishlistContext.addToWish(product)}
                     addCompare={() => compareContext.addToCompare(product)}

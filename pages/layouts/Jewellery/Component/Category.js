@@ -21,8 +21,14 @@ const Data = [
     link: "#",
   },
   {
+    img: svgRings,
+    title: "rings",
+    desc: "23 items",
+    link: "#",
+  },
+  {
     img: svgDiamond,
-    title: "diamons",
+    title: "diamonds",
     desc: "54 items",
     link: "#",
   },
@@ -45,23 +51,11 @@ const Data = [
     link: "#",
   },
   {
-    img: svgTiara,
-    title: "tiara",
-    desc: "33 items",
-    link: "#",
-  },
-  {
     img: svgEarings,
     title: "earings",
     desc: "21 items",
     link: "#",
-  },
-  {
-    img: svgLongEarings,
-    title: "long earings",
-    desc: "18 items",
-    link: "#",
-  },
+  }
 ];
 
 const MasterCategory = ({ img, title, desc, link }) => {

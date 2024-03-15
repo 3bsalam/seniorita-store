@@ -5,42 +5,46 @@ import { gql } from '@apollo/client';
 import { Product4 } from '../../../services/script'
 import ProductItem from '../product-box/ProductBox1';
 import PostLoader from '../PostLoader';
-import { Row, Col, Container } from 'reactstrap';
+import {Media, Row, Col, Container } from 'reactstrap';
 import CartContext from '../../../helpers/cart';
 import { WishlistContext } from '../../../helpers/wishlist/WishlistContext';
 import { CompareContext } from '../../../helpers/Compare/CompareContext';
+import emptySearch from "../../../public/assets/images/empty-search.jpg";
+import i18next from "../../constant/i18n";
+import ProductBox from '../product-box/ProductBox9';
 
 const GET_PRODUCTS = gql`
-    query  products($type:_CategoryType!,$indexFrom:Int! ,$limit:Int!) {
-        products (type: $type,indexFrom:$indexFrom ,limit:$limit){
-            items {
-                id
-                title
-                description 
-                type
-                brand
-                category 
-                price
-                new
-                stock
-                sale
-                discount
-                variants{
-                    id
-                    sku
-                    size
-                    color
-                    image_id
-                }
-                images{
-                    image_id
-                    id
-                    alt
-                    src
-                }
-            }
-        }
+query products {
+    products(limit: 8) {
+      id
+      title
+      title_ar
+      description
+      description_ar
+      brand
+      category {
+        title
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
+      }
     }
+  }
 `;
 
 const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, cartClass, productDetail, noTitle, titleClass, innerTitle }) => {
@@ -48,6 +52,8 @@ const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, car
     const contextWishlist = useContext(WishlistContext);
     const contextCompare = useContext(CompareContext);
     const quantity = context.quantity;
+    const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
+    const selectedLanguage = i18next.language;
 
     var { loading, data } = useQuery(GET_PRODUCTS, {
         variables: {
@@ -77,8 +83,8 @@ const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, car
                                         </div>
                                 }
 
-                                {(!data || !data.products || !data.products.items || data.products.items.length === 0 || loading) ?
-                                    (data && data.products && data.products.items && data.products.items.length === 0) ?
+                                {(!data || !data.products  || data.products.length === 0 || loading) ?
+                                    (data && data.products && data.products && data.products.length === 0) ?
                                         <Col xs="12">
                                             <div>
                                                 <div className="col-sm-12 empty-cart-cls text-center">
@@ -105,9 +111,9 @@ const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, car
                                         </div>
                                     :
                                     <Slider {...Product4} className="product-4 product-m no-arrow">
-                                        {data && data.products.items.slice(0, 8).map((product, index) =>
+                                        {data && data.products.slice(0, 8).map((product, index) =>
                                             <div key={index}>
-                                                <ProductItem product={product} productDetail={productDetail}
+                                                <ProductBox product={product} productDetail={productDetail}
                                                     addCompare={() => contextCompare.addToCompare(product)}
                                                     addWishlist={() => contextWishlist.addToWish(product)}
                                                     addCart={() => context.addToCart(product, quantity)} key={index} cartClass={cartClass} />
@@ -127,10 +133,10 @@ const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, car
                         </div>
                         <Container>
                             <Row>
-                                {data && data.products.items.slice(0, 8).map((product, index) =>
+                                {data && data.products.slice(0, 8).map((product, index) =>
                                     <Col xl="3" sm="6" key={index}>
                                         <div>
-                                            <ProductItem product={product} productDetail={productDetail}
+                                            <ProductBox product={product} productDetail={productDetail}
                                                 addCompare={() => contextCompare.addToCompare(product)}
                                                 addWishlist={() => contextWishlist.addToWish(product)}
                                                 addCart={() => context.addToCart(product, quantity)} key={index} />

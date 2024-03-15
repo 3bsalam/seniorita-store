@@ -11,61 +11,95 @@ import PostLoader from "../../../components/common/PostLoader";
 import CartContext from "../../../helpers/cart";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
+import i18next from "../../../components/constant/i18n";
 
+// const GET_PRODUCTS = gql`
+//   query products(
+//     $type: _CategoryType!
+//     $indexFrom: Int!
+//     $limit: Int!
+//     $color  : String!
+//     $brand: [String!]!
+//     $sortBy: _SortBy!
+//     $priceMax: Int!
+//     $priceMin: Int!
+//   ) {
+//     products(
+//       type: $type
+//       indexFrom: $indexFrom
+//       limit: $limit
+//       color: $color
+//       brand: $brand
+//       sortBy: $sortBy
+//       priceMax: $priceMax
+//       priceMin: $priceMin
+//     ) {
+//       total
+//       hasMore
+//       items {
+//         id
+//         title
+//         description
+//         type
+//         brand
+//         category
+//         price
+//         new
+//         sale
+//         stock
+//         discount
+//         variants {
+//           id
+//           sku
+//           size
+//           color
+//           image_id
+//         }
+//         images {
+//           image_id
+//           id
+//           alt
+//           src
+//         }
+//       }
+//     }
+//   }
+// `;
 const GET_PRODUCTS = gql`
-  query products(
-    $type: _CategoryType!
-    $indexFrom: Int!
-    $limit: Int!
-    $color: String!
-    $brand: [String!]!
-    $sortBy: _SortBy!
-    $priceMax: Int!
-    $priceMin: Int!
-  ) {
-    products(
-      type: $type
-      indexFrom: $indexFrom
-      limit: $limit
-      color: $color
-      brand: $brand
-      sortBy: $sortBy
-      priceMax: $priceMax
-      priceMin: $priceMin
-    ) {
-      total
-      hasMore
-      items {
-        id
+query products($category_id: ID!) {
+  products(where: { category:{id_eq: $category_id}}) {
+      id
+      title
+      title_ar
+      description
+      description_ar
+      brand
+      category{
         title
-        description
-        type
-        brand
-        category
-        price
-        new
-        sale
-        stock
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
       }
     }
   }
 `;
 
-const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
+const ProductList = ({ colClass, layoutList, openSidebar, noSidebar, category }) => {
   const cartContext = useContext(CartContext);
   const quantity = cartContext.quantity;
   const wishlistContext = useContext(WishlistContext);
@@ -85,6 +119,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [layout, setLayout] = useState(layoutList);
   const [url, setUrl] = useState();
+  const selectedLanguage = i18next.language;
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -104,6 +139,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
       sortBy: sortBy,
       indexFrom: 0,
       limit: limit,
+      category_id: category
     },
   });
 
@@ -113,7 +149,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
       () =>
         fetchMore({
           variables: {
-            indexFrom: data.products.items.length,
+            indexFrom: data.products.length,
           },
           updateQuery: (prev, { fetchMoreResult }) => {
             if (!fetchMoreResult) return prev;
@@ -123,8 +159,8 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                 __typename: prev.products.__typename,
                 total: prev.products.total,
                 items: [
-                  ...prev.products.items,
-                  ...fetchMoreResult.products.items,
+                  ...prev.products,
+                  ...fetchMoreResult.products,
                 ],
                 hasMore: fetchMoreResult.products.hasMore,
               },
@@ -254,7 +290,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                       <div className="search-count">
                         <h5>
                           {data
-                            ? `Showing Products 1-${data.products.items.length} of ${data.products.total}`
+                            ? `Showing Products 1-${data.products.length} of ${data.products.total}`
                             : "loading"}{" "}
                           Result
                         </h5>
@@ -352,13 +388,13 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                   {/* Product Box */}
                   {!data ||
                     !data.products ||
-                    !data.products.items ||
-                    data.products.items.length === 0 ||
+                    !data.products ||
+                    data.products.length === 0 ||
                     loading ? (
                     data &&
                       data.products &&
-                      data.products.items &&
-                      data.products.items.length === 0 ? (
+                      data.products &&
+                      data.products.length === 0 ? (
                       <Col xs="12">
                         <div>
                           <div className="col-sm-12 empty-cart-cls text-center">
@@ -392,7 +428,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     )
                   ) : (
                     data &&
-                    data.products.items.map((product, i) => (
+                    data.products.map((product, i) => (
                       <div className={grid} key={i}>
                         <div className="product">
                           <div>

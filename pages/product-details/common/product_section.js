@@ -9,39 +9,46 @@ import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { useRouter } from "next/router";
 
 const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
+  query products($category_id: ID!, $excluded_id: ID) {
+    products(
+      where: {
+        category: { id_eq: $category_id }
+        id_ne: $excluded_id
+      }
+    ) {
+      id
+      title
+      title_ar
+      description
+      description_ar
+      brand
+      category {
         title
-        description
-        type
-        brand
-        category
-        price
-        new
-        stock
-        sale
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
       }
     }
   }
 `;
 
-const ProductSection = () => {
+
+const ProductSection = (props) => {
   const router = useRouter();
   const curContext = useContext(CurrencyContext);
   const wishlistContext = useContext(WishlistContext);
@@ -57,6 +64,7 @@ const ProductSection = () => {
   const [selectedProduct, setSelectedProduct] = useState();
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
   const uniqueTags = [];
 
   const changeQty = (e) => {
@@ -64,8 +72,8 @@ const ProductSection = () => {
   };
 
   const clickProductDetail = (product) => {
-    const titleProps = product.title.split(" ").join("");
-    router.push(`/product-details/${product.id}` + "-" + `${titleProps}`, undefined, { shallow: true });
+    const titleProps = category;
+    router.push(`/product-details/${titleProps}` + "-" + `${product.id}`, undefined, { shallow: true });
   };
 
   const getSelectedProduct = (item) => {
@@ -75,11 +83,14 @@ const ProductSection = () => {
 
   var { loading, data } = useQuery(GET_PRODUCTS, {
     variables: {
-      type: "fashion",
-      indexFrom: 0,
-      limit: 8,
+      category_id: props.category,
+      excluded_id: props.product_id
+
     },
   });
+
+
+
 
   return (
     <section className="section-b-space ratio_asos">
@@ -92,13 +103,13 @@ const ProductSection = () => {
         <Row className="search-product">
           {!data ||
             !data.products ||
-            data.products.items.length === 0 ||
+            data.products.length === 0 ||
             loading ? (
             "loading"
           ) : (
             <>
               {data &&
-                data.products.items.slice(0, 6).map((product, index) => (
+                data.products.slice(0, 6).map((product, index) => (
                   <Col xl="2" md="4" sm="6" key={index}>
                     <div className="product-box">
                       <div className="img-wrapper">
@@ -106,7 +117,7 @@ const ProductSection = () => {
                           <a href={null}>
                             <Media
                               onClick={() => clickProductDetail(product)}
-                              src={product.images[0].src}
+                              src={`${strapiBaseUrl}${product.images[0].url}`}
                               className="img-fluid blur-up lazyload bg-img"
                               alt=""
                             />
@@ -115,7 +126,7 @@ const ProductSection = () => {
                         <div className="back">
                           <a href={null}>
                             <Media
-                              src={product.images[1].src}
+                              src={`${strapiBaseUrl}${product.images[1].url}`}
                               className="img-fluid blur-up lazyload bg-img"
                               alt=""
                             />
@@ -156,13 +167,13 @@ const ProductSection = () => {
                         </div>
                       </div>
                       <div className="product-detail">
-                        <div className="rating">
+                        {/* <div className="rating">
                           <i className="fa fa-star"></i>{" "}
                           <i className="fa fa-star"></i>{" "}
                           <i className="fa fa-star"></i>{" "}
                           <i className="fa fa-star"></i>{" "}
                           <i className="fa fa-star"></i>
-                        </div>
+                        </div> */}
                         <a href={null}>
                           <h6>{product.title}</h6>
                         </a>
@@ -171,9 +182,9 @@ const ProductSection = () => {
                           {product.price}
                         </h4>
                         <ul className="color-variant">
-                          <li className="bg-light0"></li>
+                          {/* <li className="bg-light0"></li>
                           <li className="bg-light1"></li>
-                          <li className="bg-light2"></li>
+                          <li className="bg-light2"></li> */}
                         </ul>
                       </div>
                     </div>
@@ -194,7 +205,7 @@ const ProductSection = () => {
                 <Col lg="6" xs="12">
                   <div className="quick-view-img">
                     <Media
-                      src={`${selectedProduct.images[0].src}`}
+                      src={`${strapiBaseUrl}${selectedProduct.images[0].url}`}
                       alt=""
                       className="img-fluid"
                     />

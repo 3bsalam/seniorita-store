@@ -1,11 +1,14 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Row, Col, Media, Modal, ModalBody, ModalHeader } from "reactstrap";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
+import i18next from "../../../components/constant/i18n";
+import { useTranslation } from "react-i18next";
 
-const ProductBox = ({ product, addCart, addWish, addCompare }) => {
+const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [modalCompare, setModalCompare] = useState(false);
   const toggleCompare = () => setModalCompare(!modalCompare);
@@ -20,21 +23,30 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
   const setQuantity = cartContext.setQuantity;
   const uniqueTags = [];
   const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
+  const selectedLanguage = i18next.language
 
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
   };
 
   const clickProductDetail = () => {
-    const titleProps = product.title.split(" ").join("");
-    router.push(`/product-details/${product.id}` + "-" + `${titleProps}`);
+    const titleProps = category
+    router.push(`/product-details/${titleProps}` + "-" + `${product.id}`);
+    
   };
 
+  useEffect(() => {
+
+  },[t])
   return (
     <div className="product-box">
       <div className="img-wrapper">
+      <div className="lable-block">
+          {product.new === true ? <span className="lable3">new</span> : ""}
+          {product.sale === true ? <span className="lable4">on sale</span> : ""}
+        </div>
         <div className="front" onClick={clickProductDetail}>
-          <a href="#!">
+          <a href={clickProductDetail}>
             <Media
               src={`${strapiBaseUrl}${product.images[0].url}`}
               className="img-fluid blur-up lazyload"
@@ -67,7 +79,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
       </div>
       <div className="product-detail" onClick={clickProductDetail}>
         <a href="#!">
-          <h6>{product.title}</h6>
+          <h6>{selectedLanguage === 'en' ? product.title : product.title_ar}</h6>
         </a>
         <h4>
           {currency.symbol}
@@ -90,14 +102,14 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
             <Col lg="12">
               <div className="media">
                 <Media
-                  src={product.images[0].src}
+                  src={`${strapiBaseUrl}${product.images[0].url}`}
                   alt=""
                   className="img-fluid"
                 />
                 <div className="media-body align-self-center text-center">
                   <h5>
                     <i className="fa fa-check"></i>Item{" "}
-                    <span>{product.title} </span>
+                    <span>{selectedLanguage === 'en' ? product.title : product.title_ar} </span>
                     <span> successfully added to your Compare list</span>
                   </h5>
                   <div className="buttons d-flex justify-content-center">
@@ -131,7 +143,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
             <Col lg="6" xs="12">
               <div className="quick-view-img">
                 <Media
-                  src={product.images[0].src}
+                 src={`${strapiBaseUrl}${product.images[0].url}`}
                   alt=""
                   className="img-fluid"
                 />
@@ -139,7 +151,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
             </Col>
             <Col lg="6" className="rtl-text">
               <div className="product-right">
-                <h2> {product.title} </h2>
+                <h2> {selectedLanguage === 'en' ? product.title : product.title_ar} </h2>
                 <h3>
                   {currency.symbol}
                   {(product.price * currency.value).toFixed(2)}
@@ -171,8 +183,8 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
                   ""
                 )}
                 <div className="border-product">
-                  <h6 className="product-title">product details</h6>
-                  <p>{product.description}</p>
+                  <h6 className="product-title">product description</h6>
+                  <p>{selectedLanguage === 'en' ? product.description : product.description_ar}</p>
                 </div>
                 <div className="product-description border-product">
                   {product.size ? (
@@ -190,7 +202,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
                   ) : (
                     ""
                   )}
-                  <h6 className="product-title">quantity</h6>
+                  <h6 className="product-title">{t('quantity')}</h6>
                   <div className="qty-box">
                     <div className="input-group">
                       <span className="input-group-prepend">

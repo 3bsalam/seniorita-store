@@ -11,37 +11,37 @@ import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import search from "../../../public/assets/images/empty-search.jpg";
 
 const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
+query products($category_id: ID!) {
+  products(where: { category:{id_eq: $category_id}}) {
+      id
+      title
+      description
+      brand
+      category{
         title
-        description
-        type
-        brand
-        category
-        price
-        new
-        stock
-        sale
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
       }
     }
   }
 `;
+
 
 const TopCollection = ({ type, title, subtitle, designClass, noSlider, cartClass, productSlider, titleClass, noTitle, innerClass, inner, backImage }) => {
   const context = useContext(CartContext);
@@ -55,6 +55,7 @@ const TopCollection = ({ type, title, subtitle, designClass, noSlider, cartClass
       type: type,
       indexFrom: 0,
       limit: 8,
+      category_id: 1
     },
   });
 

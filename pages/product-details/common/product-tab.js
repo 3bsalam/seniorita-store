@@ -1,8 +1,53 @@
 import React, { useState } from "react";
 import { Container, Row, Col, TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
+import { useQuery } from "@apollo/client";
+import { gql } from '@apollo/client';
+import i18next from "../../../components/constant/i18n";
+import { useTranslation } from "react-i18next";
 
-const ProductTab = () => {
+const GET_SINGLE_PRODUCTS = gql`
+query products($id: ID!) {
+  product(id: $id) {
+      id
+      title
+      title_ar
+      description
+      description_ar
+      brand
+      category{
+        title
+        id
+      }
+      price
+      new
+      stock
+      sale
+      discount
+      variants {
+        id
+        sku
+        size
+        color
+        image_id
+      }
+      images {
+        url
+        id
+        previewUrl
+      }
+    }
+  }
+`;
+
+const ProductTab = (props) => {
+  const { t } = useTranslation();
+  const selectedLanguage = i18next.language
   const [activeTab, setActiveTab] = useState("1");
+  var { loading, data } = useQuery(GET_SINGLE_PRODUCTS, {
+    variables: {
+      id: props.product_id,
+    },
+  });
 
   return (
     <section className="tab-product m-0">
@@ -16,7 +61,7 @@ const ProductTab = () => {
                     Description
                   </NavLink>
                 </NavItem>
-                <NavItem className="nav nav-tabs" id="myTab" role="tablist">
+                {/* <NavItem className="nav nav-tabs" id="myTab" role="tablist">
                   <NavLink className={activeTab === "2" ? "active" : ""} onClick={() => setActiveTab("2")}>
                     Details
                   </NavLink>
@@ -30,16 +75,20 @@ const ProductTab = () => {
                   <NavLink className={activeTab === "4" ? "active" : ""} onClick={() => setActiveTab("4")}>
                     Write Review
                   </NavLink>
-                </NavItem>
+                </NavItem> */}
               </Nav>
               <TabContent activeTab={activeTab} className="nav-material">
                 <TabPane tabId="1">
                   <p className="mb-0 pb-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                    {!data || !data.product || data.product.length === 0 || loading ? (
+                      "loading"
+                    ) : (
+                      selectedLanguage === 'en' ? data.product.description : data.product.description_ar
+                    )}
+
                   </p>
                 </TabPane>
-                <TabPane tabId="2">
+                {/* <TabPane tabId="2">
                   <p className="mb-0 pb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
                 </TabPane>
                 <TabPane tabId="3">
@@ -47,7 +96,7 @@ const ProductTab = () => {
                 </TabPane>
                 <TabPane tabId="4">
                   <p className="mb-0 pb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
-                </TabPane>
+                </TabPane> */}
               </TabContent>
             </Row>
           </Col>

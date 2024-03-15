@@ -11,14 +11,17 @@ import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
 
+
 const GET_PRODUCTS = gql`
-query products($category_id: ID!) {
-  products(where: { category:{id_eq: $category_id}}) {
+query products {
+    products{
       id
       title
+      title_ar
       description
+      description_ar
       brand
-      category{
+      category {
         title
         id
       }
@@ -42,7 +45,6 @@ query products($category_id: ID!) {
     }
   }
 `;
-
 const TabContent = ({
   data,
   loading,
@@ -62,13 +64,11 @@ const TabContent = ({
     <Row className="no-slider">
       {!data ||
       !data.products ||
-      !data.products.items ||
-      data.products.items.length === 0 ||
+      data.products.length === 0 ||
       loading ? (
         data &&
         data.products &&
-        data.products.items &&
-        data.products.items.length === 0 ? (
+        data.products.length === 0 ? (
           <Col xs="12">
             <div>
               <div className="col-sm-12 empty-cart-cls text-center">

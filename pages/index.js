@@ -1,44 +1,72 @@
-import React from "react";
-import Banner from "./layouts/Fashion/Components/Banner";
-import CollectionBanner from "./layouts/Fashion/Components/Collection-Banner";
-import TopCollection from "../components/common/Collections/Collection3";
-import Parallax from "./layouts/Fashion/Components/Parallax";
-import SpecialProducts from "../components/common/Collections/TabCollection1";
-import ServiceLayout from "../components/common/Service/service1";
-import Blog from "../components/common/Blog/blog1";
-import Instagram from "../components/common/instagram/instagram1";
-import LogoBlock from "../components/common/logo-block";
-import HeaderOne from "../components/headers/header-one";
-import { Product4 } from "../services/script";
-import Paragraph from "../components/common/Paragraph";
-import ModalComponent from "../components/common/Modal";
+import React, { Fragment, useEffect } from "react";
+// import { withApollo } from "../../../helpers/apollo/apollo";
+import HeaderSeven from "/root/seniorita_store/frontend/components/headers/header-seven";
+import Banner from "/root/seniorita_store/frontend/pages/layouts/Jewellery/Component/Banner";
+import Category from "/root/seniorita_store/frontend/pages/layouts/Jewellery/Component/Category";
+import TopCollection from "/root/seniorita_store/frontend/components/common/Collections/Collection1";
+import Service from "/root/seniorita_store/frontend/components/common/Service/service2";
+import SpecialProducts from "/root/seniorita_store/frontend/components/common/Collections/TabCollection1.js";
+import Instagram from "/root/seniorita_store/frontend/components/common/instagram/instagram2";
+import FooterFive from "/root/seniorita_store/frontend/components/footers/footer-five";
+import Paragraph from "/root/seniorita_store/frontend/components/common/Paragraph";
+import { Product5 } from "/root/seniorita_store/frontend/services/script";
+import ModalComponent from "/root/seniorita_store/frontend/components/common/Modal";
 import Helmet from "react-helmet";
-import MasterFooter from "../components/footers/common/MasterFooter";
+import MasterParallaxBanner from "/root/seniorita_store/frontend/temp layouts/Fashion/Components/MasterParallaxBanner";
 
-const Fashion = () => {
+const Jewellery = () => {
+  useEffect(() => {
+    document.documentElement.style.setProperty("--theme-deafult", "#5fcbc4");
+  });
+  
   return (
-    <>
+    <Fragment>
       <Helmet>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/x-icon" href={"/assets/images/favicon/1.png"} />
+        <link rel="icon" type="image/x-icon" href={"/assets/images/favicon/favicon.png"} />
       </Helmet>
-      <ModalComponent />
-      <HeaderOne logoName={"logo.png"} topClass="top-header" />
-      <Banner />
-      <CollectionBanner />
-      <Paragraph title="title1 section-t-space" inner="title-inner1" hrClass={false} />
-      <TopCollection noTitle="null" backImage={true} type="fashion" title="top collection" subtitle="special offer" productSlider={Product4} designClass="section-b-space p-t-0 ratio_asos px-2" noSlider="false" cartClass="cart-info cart-wrap" />
-      <Parallax />
-      <SpecialProducts type="fashion" backImage={true} productSlider={Product4} line={true} title="title1 section-t-space" inner="title-inner1" designClass="section-b-space p-t-0 ratio_asos" noSlider="true" cartClass="cart-info cart-wrap" />
-      <ServiceLayout sectionClass="border-section small-section" />
-      <Blog type="fashion" title="title1" inner="title-inner1" />
-      <Instagram type="fashion" />
-      <div className="section-b-space">
-        <LogoBlock />
+      <div className="bg_cls">
+        <ModalComponent />
+        <HeaderSeven logoName={"logo/13.png"} />
+        <Banner />
+        <Category />
+        <Paragraph
+          title="title1  section-t-space title5"
+          inner="title-inner1"
+          hrClass={true}
+        />
+        <TopCollection
+          type="jewellery"
+          designClass="p-t-0 j-box ratio_square"
+          productSlider={Product5}
+          noSlider="true"
+          cartClass="cart-info cart-wrap"
+        />
+        <Service layoutClass="section-b-space" />
+        <MasterParallaxBanner
+          bg="parallax-banner18"
+          parallaxClass="text-center p-left"
+          title="sale"
+          subTitle1="fashion trends"
+          subTitle2="special offer"
+        />
+        <SpecialProducts
+          type="jewellery"
+          heading="exclusive products"
+          title="title1  section-t-space title5"
+          inner="title-inner1"
+          hrClass={true}
+          designClass="p-t-0 j-box ratio_square"
+          noSlider="true"
+          cartClass="cart-info cart-wrap"
+        />
+        <section className="instagram ratio_square section-b-space">
+          <Instagram type="jewellery" />
+        </section>
+        <FooterFive logoName={"logo/13.png"} layoutClass="black-subfooter" />
       </div>
-      <MasterFooter footerClass={`footer-light`} footerLayOut={"light-layout upper-footer"} footerSection={"small-section border-section border-top-0"} belowSection={"section-b-space light-layout"} newLatter={true} logoName={"logo.png"} />
-    </>
+    </Fragment>
   );
 };
 
-export default Fashion;
+export default Jewellery;

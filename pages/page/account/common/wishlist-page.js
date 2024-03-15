@@ -4,8 +4,10 @@ import { WishlistContext } from "../../../../helpers/wishlist/WishlistContext";
 import CartContext from "../../../../helpers/cart/index";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const WishlistPage = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const context = useContext(WishlistContext);
   const cartContext = useContext(CartContext);
@@ -13,6 +15,7 @@ const WishlistPage = () => {
   const wishlist = context.wishlistItems;
   const removeFromWish = context.removeFromWish;
   const addCart = cartContext.addToCart;
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
 
   const checkOut = () => {
     router.push("/page/account/checkout");
@@ -28,11 +31,11 @@ const WishlistPage = () => {
                 <Table className="table cart-table table-responsive-xs">
                   <thead>
                     <tr className="table-head">
-                      <th scope="col">image</th>
-                      <th scope="col">product name</th>
-                      <th scope="col">price</th>
-                      <th scope="col">availability</th>
-                      <th scope="col">action</th>
+                      <th scope="col">{t('image')}</th>
+                      <th scope="col">{t('product name')}</th>
+                      <th scope="col">{t('price')}</th>
+                      <th scope="col">{t('availability')}</th>
+                      <th scope="col">{t('action')}</th>
                     </tr>
                   </thead>
                   {wishlist.map((item, i) => (
@@ -40,14 +43,14 @@ const WishlistPage = () => {
                       <tr>
                         <td>
                           <a href="#">
-                            <img src={item.images[0].src} alt="" />
+                            <img src={`${strapiBaseUrl}${item.images[0].url}`} alt="" />
                           </a>
                         </td>
                         <td>
                           <a href="#">{item.title}</a>
                           <Row className="mobile-cart-content">
                             <div className="col-xs-3">
-                              <p>out of stock</p>
+                              <p>{t('out of stock')}</p>
                             </div>
                             <div className="col-xs-3">
                               <h2 className="td-color">$63.00</h2>

@@ -20,7 +20,7 @@ const MasterProductDetail = ({
     <div className={`product-detail ${productDetail} ${detailClass}`}>
       <div>
         {title !== "Product style 4" ? (
-          <div className="rating">{RatingStars}</div>
+          <div></div>
         ) : (
           ""
         )}
@@ -55,7 +55,8 @@ const MasterProductDetail = ({
           ""
         ) : (
           <>
-            {title !== "Product style 4" && uniqueTags[0].color ? (
+          {/* {title !== "Product style 4" && (uniqueTags[0].color || 'black') */}
+            {title !== "Product style 4" && ( 'black') ? (
               <ul className="color-variant">
                 {uniqueTags.map((vari, i) => {
                   return (

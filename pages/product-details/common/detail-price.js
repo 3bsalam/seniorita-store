@@ -135,20 +135,20 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
             buy now
           </Link>
         </div>
-        <div className="border-product">
+        {/* <div className="border-product">
           <h6 className="product-title">product details</h6>
           <p>{product.description}</p>
-        </div>
+        </div> */}
         <div className="border-product">
           <h6 className="product-title">share it</h6>
           <div className="product-icon">
             <MasterSocial />
           </div>
         </div>
-        <div className="border-product">
+        {/* <div className="border-product">
           <h6 className="product-title">Time Reminder</h6>
           <CountdownComponent />
-        </div>
+        </div> */}
       </div>
     </>
   );
