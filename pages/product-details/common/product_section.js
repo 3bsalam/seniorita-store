@@ -123,7 +123,11 @@ const ProductSection = (props) => {
                             />
                           </a>
                         </div>
-                        <div className="back">
+                        {!product ||
+                          !product.images ||
+                          product.images.length < 2 ||
+
+                          loading ? '' : <div className="back">
                           <a href={null}>
                             <Media
                               src={`${strapiBaseUrl}${product.images[1].url}`}
@@ -131,7 +135,7 @@ const ProductSection = (props) => {
                               alt=""
                             />
                           </a>
-                        </div>
+                        </div>}
                         <div className="cart-info cart-wrap">
                           <button
                             data-toggle="modal"
