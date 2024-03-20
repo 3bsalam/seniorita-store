@@ -10,6 +10,7 @@ import i18next from "../../constant/i18n";
 const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass, productDetail, addCompare, title }) => {
   // eslint-disable-next-line
   const router = useRouter();
+  const category_id = router.query.category_id
   const cartContext = useContext(CartContext);
   const curContext = useContext(CurrencyContext);
   const currency = curContext.state;
@@ -36,8 +37,7 @@ const ProductItem = ({ product, addCart, backImage, des, addWishlist, cartClass,
   };
 
   const clickProductDetail = () => {
-    const titleProps =  product.title.split(" ").join("");
-    router.push(`/product-details/${product.id}` + "-" + `${titleProps}`);
+    router.push(`/categories/${category_id}/products/${product.id}`);
   };
 
   const variantChangeByColor = (imgId, product_images) => {

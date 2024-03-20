@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const category_id = router.query.category_id
   const [modalCompare, setModalCompare] = useState(false);
   const toggleCompare = () => setModalCompare(!modalCompare);
   const [modal, setModal] = useState(false);
@@ -30,8 +31,7 @@ const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
   };
 
   const clickProductDetail = () => {
-    const titleProps = category
-    router.push(`/product-details/${titleProps}` + "-" + `${product.id}`);
+    router.push(`/categories/${category_id}/products/${product.id}`);
     
   };
 
