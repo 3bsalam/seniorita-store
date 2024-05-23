@@ -29,13 +29,16 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
     <>
       <div className={`product-right ${stickyClass}`}>
         <h2> {product.title} </h2>
-        <h4>
-          <del>
-            {symbol}
-            {product.price}
-          </del>
-          <span>{product.discount}% off</span>
-        </h4>
+        {product.sale && product.discount > 0 ? (
+          <h4>
+            <del>
+              {symbol}
+              {product.price}
+            </del>
+            <span>{product.discount}% off</span>
+          </h4>
+        ) : null}
+
         <h3>
           {symbol}
           {product.price - (product.price * product.discount) / 100}

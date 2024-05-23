@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import Slider from 'react-slick';
+import Masonry from "react-masonry-css";
 import { useQuery } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { Product4 } from '../../../services/script'
@@ -48,12 +49,18 @@ query products {
 `;
 
 const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, cartClass, productDetail, noTitle, titleClass, innerTitle }) => {
-    const context = useContext(CartContext)
-    const contextWishlist = useContext(WishlistContext);
-    const contextCompare = useContext(CompareContext);
-    const quantity = context.quantity;
+    const cartContext = useContext(CartContext);
+    const wishlistContext = useContext(WishlistContext);
+    const compareContext = useContext(CompareContext);
+    const quantity = cartContext.quantity;
     const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
     const selectedLanguage = i18next.language;
+    const breakpointColumnsObj = {
+        default: 4,
+        1199: 3,
+        767: 2,
+        500: 1
+      };
 
     var { loading, data } = useQuery(GET_PRODUCTS, {
         variables: {
@@ -110,17 +117,29 @@ const TopCollection = ({ type, title, subtitle, designClass, line, noSlider, car
                                             </div>
                                         </div>
                                     :
-                                    <Slider {...Product4} className="product-4 product-m no-arrow">
-                                        {data && data.products.slice(0, 8).map((product, index) =>
-                                            <div key={index}>
-                                                <ProductBox product={product} productDetail={productDetail}
-                                                    addCompare={() => contextCompare.addToCompare(product)}
-                                                    addWishlist={() => contextWishlist.addToWish(product)}
-                                                    addCart={() => context.addToCart(product, quantity)} key={index} cartClass={cartClass} />
-                                            </div>
-                                        )
-                                        }
-                                    </Slider>
+                                    <Masonry
+                                    breakpointCols={breakpointColumnsObj}
+                                    className="isotopeContainer row"
+                                    columnClassName={`isotopeSelector ${
+                                        "col-xl-3 col-sm-6"
+                                    }`}
+                                  >
+                                    {data &&
+                                      data.products
+                                        .slice(0, 8)
+                                        .map((product, index) => (
+                                          <ProductBox
+                                            product={product}
+                                            category={product.category.id}
+                                            productDetail={productDetail}
+                                            addCart={() => cartContext.addToCart(product, quantity)}
+                                            addWish={() => wishlistContext.addToWish(product)}
+                                            addCompare={() => compareContext.addToCompare(product)}
+                                            key={index}
+                                          />
+                                        ))}
+                                  </Masonry>
+                                    
                                 }
                             </Col>
                         </Row>

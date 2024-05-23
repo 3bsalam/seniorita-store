@@ -38,7 +38,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
     <div className="product-box">
       <div className="img-wrapper">
         <div className="front" onClick={clickProductDetail}>
-          <a href="#!">
+          <a>
             <Media
               src={`${strapiBaseUrl}${product.images[0].url}`}
               className="img-fluid blur-up lazyload"
@@ -70,7 +70,7 @@ const ProductBox = ({ product, addCart, addWish, addCompare }) => {
         </div>
       </div>
       <div className="product-detail" onClick={clickProductDetail}>
-        <a href="#!">
+        <a>
           <h6>{selectedLanguage == 'en' ? product.title : product.title_ar}</h6>
         </a>
         <h4>

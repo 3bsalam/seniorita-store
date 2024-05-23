@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import ProductItem from "../product-box/ProductBox1";
+import ProductBox from '../product-box/ProductBox9';
 import CartContext from "../../../helpers/cart/index";
 import { Container, Row, Col, Media } from "reactstrap";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
@@ -105,7 +106,7 @@ const TabContent = ({
         data.products
           // .slice(startIndex, endIndex)
           .map((product, i) => (
-            <ProductItem
+            <ProductBox
               key={i}
               product={product}
               symbol={currency.symbol}

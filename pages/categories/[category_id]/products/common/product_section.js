@@ -130,6 +130,7 @@ const ProductSection = (props) => {
                           loading ? '' : <div className="back">
                           <a href={null}>
                             <Media
+                             onClick={() => clickProductDetail(product)}
                               src={`${strapiBaseUrl}${product.images[1].url}`}
                               className="img-fluid blur-up lazyload bg-img"
                               alt=""

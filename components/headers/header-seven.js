@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import NavBar from "./common/navbar";
 import LogoImage from "./common/logo";
-import { Media, Row, Col, Container } from "reactstrap";
+import { Media, Row, Col, Container, Button } from "reactstrap";
 import search from "../../public/assets/images/jewellery/icon/search.png";
 import heart from "../../public/assets/images/jewellery/icon/heart.png";
 import avatar from "../../public/assets/images/jewellery/icon/avatar.png";
@@ -11,6 +11,7 @@ import cart from "../../public/assets/images/jewellery/icon/cart.png";
 import settings from "../../public/assets/images/jewellery/icon/controls.png";
 import CartContainer from "../containers/CartContainer";
 import SearchOverlay from "./common/search-overlay";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const HeaderSeven = ({ logoName }) => {
   useEffect(() => {
@@ -22,6 +23,7 @@ const HeaderSeven = ({ logoName }) => {
   const openSearch = () => {
     document.getElementById("search-overlay").style.display = "block";
   };
+  const { loginWithRedirect } = useAuth0();
 
   return (
     <>
@@ -55,11 +57,11 @@ const HeaderSeven = ({ logoName }) => {
                         <Media src={avatar.src} alt="" />
                         <ul className="onhover-show-div">
                           <li>
-                            <Link href="/page/account/login" data-lng="en">
+                            <Button  onClick={loginWithRedirect} data-lng="en">
                               {/* <a > */}
                               Login
                               {/* </a> */}
-                            </Link>
+                            </Button>
                           </li>
                           <li>
                             <Link href="/" data-lng="en">

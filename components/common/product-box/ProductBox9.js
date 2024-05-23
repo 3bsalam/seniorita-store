@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const category_id = router.query.category_id
+  const category_id = router.query.category_id || category
   const [modalCompare, setModalCompare] = useState(false);
   const toggleCompare = () => setModalCompare(!modalCompare);
   const [modal, setModal] = useState(false);
@@ -32,16 +32,16 @@ const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
 
   const clickProductDetail = () => {
     router.push(`/categories/${category_id}/products/${product.id}`);
-    
+
   };
 
   useEffect(() => {
 
-  },[t])
+  }, [t])
   return (
     <div className="product-box">
       <div className="img-wrapper">
-      <div className="lable-block">
+        <div className="lable-block">
           {product.new === true ? <span className="lable3">new</span> : ""}
           {product.sale === true ? <span className="lable4">on sale</span> : ""}
         </div>
@@ -88,10 +88,13 @@ const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
             currency.value
           ).toFixed(2)}
           <del>
-            <span className="money">
-              {currency.symbol}
-              {(product.price * currency.value).toFixed(2)}
-            </span>
+            {product.sale ? (
+              <span className="money">
+                {currency.symbol}
+                {(product.price * currency.value).toFixed(2)}
+              </span>
+            ) : null}
+
           </del>
         </h4>
       </div>
@@ -143,7 +146,7 @@ const ProductBox = ({ product, category, addCart, addWish, addCompare }) => {
             <Col lg="6" xs="12">
               <div className="quick-view-img">
                 <Media
-                 src={`${strapiBaseUrl}${product.images[0].url}`}
+                  src={`${strapiBaseUrl}${product.images[0].url}`}
                   alt=""
                   className="img-fluid"
                 />
