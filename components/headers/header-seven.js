@@ -44,50 +44,21 @@ const HeaderSeven = ({ logoName }) => {
                       <NavBar />
                     </nav>
                   </div>
-                  <div className="top-header">
-                    <ul className="header-dropdown">
-                      <li className="mobile-wishlist">
-                        <Link href="/page/account/wishlist">
-                          {/* <a> */}
-                          <Media src={heart.src} alt="" />
-                          {/* </a> */}
-                        </Link>
-                      </li>
-                      <li className="onhover-dropdown mobile-account">
-                        <Media src={avatar.src} alt="" />
-                        <ul className="onhover-show-div">
-                          <li>
-                            <Button  onClick={loginWithRedirect} data-lng="en">
-                              {/* <a > */}
-                              Login
-                              {/* </a> */}
-                            </Button>
-                          </li>
-                          <li>
-                            <Link href="/" data-lng="en">
-                              {/* <a > */}
-                              Logout
-                              {/* </a> */}
-                            </Link>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </div>
+              
                   <div>
                     <div className="icon-nav">
                       <ul>
                         <li className="onhover-div mobile-search">
                           <div>
-                            <Media
+                            {/* <Media
                               src={search.src}
                               onClick={openSearch}
                               className="img-fluid"
                               alt=""
-                            />
-                            <i
+                            /> */}
+                            {/* <i
                               className="fa fa-search"
-                              onClick={openSearch}></i>
+                              onClick={openSearch}></i> */}
                           </div>
                         </li>
                         <Currency icon={settings.src} />
