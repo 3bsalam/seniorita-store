@@ -2,123 +2,129 @@ import React, { useState, useContext } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
-import ProductItem from "../product-box/ProductBox1";
 import ProductBox from '../product-box/ProductBox9';
 import CartContext from "../../../helpers/cart/index";
-import { Container, Row, Col, Media } from "reactstrap";
+import { Container, Media } from "reactstrap";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import PostLoader from "../PostLoader";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
-
+import { useTranslation } from "react-i18next";
+import Masonry from "react-masonry-css";
 
 const GET_PRODUCTS = gql`
-query products {
-    products{
-      id
+ 
+query products($isNew: Boolean, $isSale: Boolean) {
+  products(
+    where: {
+      new: $isNew
+      sale: $isSale
+    }
+  ) {
+    id
+    title
+    title_ar
+    description
+    description_ar
+    brand
+    category {
       title
-      title_ar
-      description
-      description_ar
-      brand
-      category {
-        title
-        id
-      }
-      price
-      new
-      stock
-      sale
-      discount
-      variants {
-        id
-        sku
-        size
-        color
-        image_id
-      }
-      images {
-        url
-        id
-        previewUrl
-      }
+      id
+    }
+    price
+    new
+    top
+    stock
+    sale
+    discount
+    variants {
+      id
+      sku
+      size
+      color
+      image_id
+    }
+    images {
+      url
+      id
+      previewUrl
     }
   }
+}
 `;
+
 const TabContent = ({
   data,
   loading,
-  startIndex,
-  endIndex,
   cartClass,
   backImage,
 }) => {
-  const context = useContext(CartContext);
-  const wishListContext = useContext(WishlistContext);
+  const { t } = useTranslation();
+  const cartContext = useContext(CartContext);
+  const wishlistContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
   const curContext = useContext(CurrencyContext);
   const currency = curContext.state;
-  const quantity = context.quantity;
+  const quantity = cartContext.quantity;
+
+  const breakpointColumnsObj = {
+    default: 4,
+    1199: 3,
+    767: 2,
+    500: 1
+  };
 
   return (
-    <Row className="no-slider">
-      {!data ||
-      !data.products ||
-      data.products.length === 0 ||
-      loading ? (
-        data &&
-        data.products &&
-        data.products.length === 0 ? (
-          <Col xs="12">
-            <div>
-              <div className="col-sm-12 empty-cart-cls text-center">
+    <Container fluid>
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="isotopeContainer row"
+        columnClassName="isotopeSelector col-xl-3 col-lg-4 col-md-6 col-sm-6"
+      >
+        {!data ||
+        !data.products ||
+        data.products.length === 0 ||
+        loading ? (
+          data &&
+          data.products &&
+          data.products.length === 0 ? (
+            <div className="col-xs-12">
+              <div className="empty-cart-cls text-center">
                 <Media
                   src={emptySearch}
                   className="img-fluid mb-4 mx-auto"
                   alt=""
                 />
                 <h3>
-                  <strong>Your Cart is Empty</strong>
+                  <strong>{t('Your Cart is Empty')}</strong>
                 </h3>
-                <h4>Explore more shortlist some items.</h4>
+                <h4>{t('Explore more shortlist some items.')}</h4>
               </div>
             </div>
-          </Col>
+          ) : (
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <PostLoader />
+              </div>
+            ))
+          )
         ) : (
-          <div className="row mx-0 margin-default">
-            <div className="col-xl-3 col-lg-4 col-6">
-              <PostLoader />
-            </div>
-            <div className="col-xl-3 col-lg-4 col-6">
-              <PostLoader />
-            </div>
-            <div className="col-xl-3 col-lg-4 col-6">
-              <PostLoader />
-            </div>
-            <div className="col-xl-3 col-lg-4 col-6">
-              <PostLoader />
-            </div>
-          </div>
-        )
-      ) : (
-        data &&
-        data.products
-          // .slice(startIndex, endIndex)
-          .map((product, i) => (
+          data.products.map((product, i) => (
             <ProductBox
               key={i}
               product={product}
               symbol={currency.symbol}
               addCompare={() => compareContext.addToCompare(product)}
-              addCart={() => context.addToCart(product, quantity)}
-              addWishlist={() => wishListContext.addToWish(product)}
+              addCart={() => cartContext.addToCart(product, quantity)}
+              addWishlist={() => wishlistContext.addToWish(product)}
               cartClass={cartClass}
               backImage={backImage}
             />
           ))
-      )}
-    </Row>
+        )}
+      </Masonry>
+    </Container>
   );
 };
 
@@ -135,20 +141,20 @@ const SpecialProducts = ({
   hrClass,
   backImage,
 }) => {
-  const [activeTab, setActiveTab] = useState(type);
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('New');
   const context = useContext(CartContext);
-  const wishListContext = useContext(WishlistContext);
+  const wishlistContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
   const curContext = useContext(CurrencyContext);
   const currency = curContext.state;
   const quantity = context.quantity;
 
-  var { loading, data } = useQuery(GET_PRODUCTS, {
-    variables: {
-      category_id: "1"
-    },
-  });
+  const filterVariables = activeTab == 'New' ? {isNew: true} : {isSale: true}
 
+  var { loading, data } = useQuery(GET_PRODUCTS, {
+    variables: filterVariables,
+  });
 
   return (
     <div>
@@ -158,8 +164,8 @@ const SpecialProducts = ({
             ""
           ) : (
             <div className={title}>
-              <h4>exclusive products</h4>
-              <h2 className={inner}>special products</h2>
+              <h4>{t('exclusive products')}</h4>
+              <h2 className={inner}>{t('special products')}</h2>
               {line ? (
                 <div className="line"></div>
               ) : hrClass ? (
@@ -173,22 +179,16 @@ const SpecialProducts = ({
           <Tabs className="theme-tab">
             <TabList className="tabs tab-title">
               <Tab
-                className={activeTab == type ? "active" : ""}
-                onClick={() => setActiveTab(type)}
+                className={activeTab === "New arrival" ? "active" : ""}
+                onClick={() => setActiveTab("New")}
               >
-                NEW ARRIVAL
+                {t('NEW ARRIVAL')}
               </Tab>
               <Tab
-                className={activeTab == "furniture" ? "active" : ""}
-                onClick={() => setActiveTab("furniture")}
+                className={activeTab === "On sale" ? "active" : ""}
+                onClick={() => setActiveTab("Sale")}
               >
-                FEATURED{" "}
-              </Tab>
-              <Tab
-                className={activeTab == "furniture" ? "active" : ""}
-                onClick={() => setActiveTab("furniture")}
-              >
-                SPECIAL
+                {t('ON SALE')}
               </Tab>
             </TabList>
 
@@ -196,8 +196,6 @@ const SpecialProducts = ({
               <TabContent
                 data={data}
                 loading={loading}
-                startIndex={0}
-                endIndex={8}
                 cartClass={cartClass}
                 backImage={backImage}
               />
@@ -206,22 +204,11 @@ const SpecialProducts = ({
               <TabContent
                 data={data}
                 loading={loading}
-                startIndex={0}
-                endIndex={8}
                 cartClass={cartClass}
                 backImage={backImage}
               />
             </TabPanel>
-            <TabPanel>
-              <TabContent
-                data={data}
-                loading={loading}
-                startIndex={0}
-                endIndex={8}
-                cartClass={cartClass}
-                backImage={backImage}
-              />
-            </TabPanel>
+
           </Tabs>
         </Container>
       </section>
