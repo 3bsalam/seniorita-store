@@ -117,11 +117,13 @@ i18next
             ar: {
                 translations: {
                     'topbar_title': 'مرحبًا في متجرنا {theme_name}',
-                    'call_us': 'اتصل بنا',
+                    'Contact us': 'اتصل بنا',
                     'Home': 'الرئيسية',
                     'features': 'الميزات',
+                    'About us': 'قصتنا',
                     'new': 'جديد',
                     'blog': 'مدونة',
+                    'blogs': 'مدونات',
                     'blog_left_sidebar': 'شريط جانبي أيسر للمدونة',
                     'blog_right_sidebar': 'شريط جانبي أيمن للمدونة',
                     'blog_detail': 'تفاصيل المدونة',
@@ -219,7 +221,15 @@ i18next
                     'portfolio_masonary_4': 'البناء الحجري 4',
                     'portfolio_masonary_full': 'البناء الحجري بعرض كامل',
                     'Categories': 'الانواع',
-                    'quantity' : 'الكميه'
+                    'quantity' : 'الكميه',
+                    'language': 'اللغه',
+                    'currency': 'العمله',
+                    'Quick View': 'نظره سريعه',
+                    'Product Description': 'تفاصيل المنتج',
+                    'ON SALE': 'خصومات',
+                    'NEW ARRIVAL': 'التشكيله الجديده',
+                    'TOP COLLECTION': 'الاكثر مبيعا'
+
                 }
                 
             }
