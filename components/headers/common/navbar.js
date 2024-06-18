@@ -196,7 +196,7 @@ const NavBar = () => {
           <ul className="nav-menu" style={navClose}>
             <li className="back-btn" onClick={closeNav.bind(this)}>
               <div className="mobile-back text-end">
-                <span>Back navbar</span>
+                <span>{t('Back navbar')}</span>
                 <i className="fa fa-angle-right ps-2" aria-hidden="true"></i>
               </div>
             </li>
@@ -228,9 +228,9 @@ const NavBar = () => {
                               <a
                                 href={null}
                                 onClick={() => toggletNavActive(childrenItem)}>
-                                {childrenItem.title}
+                                {t(childrenItem.title)}
                                 {childrenItem.tag === "new" && (
-                                  <span className="new-tag">new</span>
+                                  <span className="new-tag">{t('new')}</span>
                                 )}
                                 <i className="fa fa-angle-right ps-2"></i>
                               </a>
@@ -239,9 +239,9 @@ const NavBar = () => {
                             )}
                             {childrenItem.type === "link" ? (
                               <Link href={`${childrenItem.path}`}>
-                                {childrenItem.title}
+                                {t(childrenItem.title)}
                                 {childrenItem.tag === "new" && (
-                                  <span className="new-tag">new</span>
+                                  <span className="new-tag">{t('new')}</span>
                                 )}
                               </Link>
                             ) : (
@@ -259,9 +259,9 @@ const NavBar = () => {
                                         <Link
                                           href={childrenSubItem.path}
                                           className="sub-menu-title">
-                                          {childrenSubItem.title}
+                                          {t(childrenSubItem.title)}
                                           {childrenSubItem.tag === "new" && (
-                                            <span className="new-tag">new</span>
+                                            <span className="new-tag">{t('new')}</span>
                                           )}
                                         </Link>
                                       ) : (
@@ -307,7 +307,7 @@ const NavBar = () => {
                                             onClick={(e) =>
                                               handleMegaSubmenu(e)
                                             }>
-                                            {megaMenuItem.title}
+                                            {t(megaMenuItem.title)}
                                           </h5>
                                         </div>
                                         <div className="menu-content">
@@ -325,7 +325,7 @@ const NavBar = () => {
                                                             <i
                                                               className={`icon-${subMegaMenuItem.icon}`}></i>
                                                             {
-                                                              subMegaMenuItem.title
+                                                              t(subMegaMenuItem.title)
                                                             }
                                                           </>
                                                         </Link>
@@ -342,7 +342,7 @@ const NavBar = () => {
                                                             subMegaMenuItem.path
                                                           }>
                                                           {
-                                                            subMegaMenuItem.title
+                                                            t(subMegaMenuItem.title)
                                                           }
                                                         </Link>
                                                       </li>

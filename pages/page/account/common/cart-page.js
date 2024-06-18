@@ -15,6 +15,7 @@ const CartPage = () => {
   const [quantity, setQty] = useState(1);
   const [quantityError, setQuantityError] = useState(false);
   const updateQty = context.updateQty;
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
 
   const handleQtyUpdate = (item, quantity) => {
     if (quantity >= 1) {
@@ -67,19 +68,19 @@ const CartPage = () => {
                       <tbody key={index}>
                         <tr>
                           <td>
-                            <Link href={`/left-sidebar/product/` + item.id}>
+                            <Link href={`/categories/${item.category.id}/products/` + item.id}>
                               <Media
                                 src={
                                   item.images
-                                    ? item.images[0].src
-                                    : item.images[0].src
+                                    ? `${strapiBaseUrl}${item.images[0].url}`
+                                    : `${strapiBaseUrl}${item.images[0].url}`
                                 }
                                 alt=""
                               />
                             </Link>
                           </td>
                           <td>
-                            <Link href={`/left-sidebar/product/` + item.id}>
+                            <Link href={`/categories/${item.category.id}/products/` + item.id}>
                               {item.title}
                             </Link>
                             <div className="mobile-cart-content row">

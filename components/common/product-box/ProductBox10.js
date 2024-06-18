@@ -1,129 +1,85 @@
-import React, { useState, useContext } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import React, { useState, useContext, useEffect } from "react";
 import { Row, Col, Media, Modal, ModalBody, ModalHeader } from "reactstrap";
-import { useTranslation } from "react-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
+import i18next from "../../../components/constant/i18n";
+import { useTranslation } from "react-i18next";
 
-const ProductItem = ({
-  product,
-  addCart,
-  addWishlist,
-  addToCompare,
-  spanClass,
-}) => {
+const ProductBox = ({ product, category, addCart, addWish, addCompare, specialClass }) => {
   const { t } = useTranslation();
+  const router = useRouter();
+  const category_id = router.query.category_id || category;
+  const [modalCompare, setModalCompare] = useState(false);
+  const toggleCompare = () => setModalCompare(!modalCompare);
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
   const curContext = useContext(CurrencyContext);
   const currency = curContext.state;
-
-  const router = useRouter();
   const cartContext = useContext(CartContext);
-
   const plusQty = cartContext.plusQty;
   const minusQty = cartContext.minusQty;
   const quantity = cartContext.quantity;
   const setQuantity = cartContext.setQuantity;
-  const [modal, setModal] = useState(false);
-  const [modalCompare, setModalCompare] = useState(false);
-  const toggle = () => setModal(!modal);
-  const toggleCompare = () => setModalCompare(!modalCompare);
   const uniqueTags = [];
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
+  const selectedLanguage = i18next.language;
 
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
   };
 
   const clickProductDetail = () => {
-    const titleProps = product.title.split(" ").join("");
-    router.push(
-      `/product-details/${product.id}` + "-" + `${titleProps}`,
-      undefined,
-      { shallow: true }
-    );
+    router.push(`/categories/${category_id}/products/${product.id}`);
   };
 
-  let RatingStars = [];
-  let rating = 5;
-  for (var i = 0; i < rating; i++) {
-    RatingStars.push(<i className="fa fa-star" key={i}></i>);
-  }
+  useEffect(() => {}, [t]);
+
   return (
-    <div className="product-box product-wrap">
+    <div className={`product-box ${specialClass}`}>
       <div className="img-wrapper">
         <div className="lable-block">
-          {product.new === "true" ? <span className="lable3">{t('new')}</span> : ""}
-          {product.sale === "true" ? (
-            <span className="lable4">{t('on sale')}</span>
-          ) : (
-            ""
-          )}
+          {product.new === true ? <span className="lable3">{t('new')}</span> : ""}
         </div>
-        <div className="front">
-          <a href={null}>
+        <div className="front" onClick={clickProductDetail}>
+          <a href={clickProductDetail}>
             <Media
-              alt=""
-              src={product.images[0].src}
-              className="img-fluid blur-up lazyload bg-img"
+              src={`${strapiBaseUrl}${product.images[0].url}`}
+              className="img-fluid blur-up lazyload"
+              alt={product.title}
             />
           </a>
         </div>
         <div className="cart-info cart-wrap">
-          <a href={null} title={t('Add to Wishlist')} onClick={addWishlist}>
+          <button
+            data-toggle="modal"
+            data-target="#addtocart"
+            title={t('Add to cart')}
+          >
+            <i className="fa fa-shopping-cart" onClick={addCart}></i>
+          </button>
+          <a href={null} title={t('add_to_wishlist')} onClick={addWish}>
             <i className="fa fa-heart" aria-hidden="true"></i>
           </a>
-          <button onClick={addCart} title={t('Add to cart')}>
-            <i className="fa fa-shopping-cart"></i>
-            {spanClass ? <span>{t('Add to cart')}</span> : ""}
-          </button>
-          <a href={null} title={t('Compare')} onClick={toggleCompare}>
-            <i className="fa fa-refresh" aria-hidden="true"></i>
-          </a>
-          <Modal isOpen={modalCompare} toggle={toggleCompare} centered>
-            <ModalHeader toggle={toggleCompare}>{t('Quick View')}</ModalHeader>
-            <ModalBody>
-              <Row className="compare-modal">
-                <Col lg="12">
-                  <div className="media">
-                    <Media
-                      src={product.images[0].src}
-                      alt=""
-                      className="img-fluid"
-                    />
-                    <div className="media-body align-self-center text-center">
-                      <h5>
-                        <i className="fa fa-check"></i>
-                        {t('Item')}{" "}
-                        <span>{product.title} </span>
-                        <span> {t('successfully added to your Compare list')}</span>
-                      </h5>
-                      <div className="buttons d-flex justify-content-center">
-                        <Link href="/page/compare" className="btn-sm btn-solid">
-                          {t('View Compare list')}
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </ModalBody>
-          </Modal>
-        </div>
-        <div className="quick-view-part">
           <a
-            className="mobile-quick-view"
             href={null}
             data-toggle="modal"
             data-target="#quick-view"
             title={t('Quick View')}
-            onClick={toggle}>
+            onClick={toggle}
+          >
             <i className="fa fa-search" aria-hidden="true"></i>
+          </a>
+          <a href={null} title={t('compare')} onClick={toggleCompare}>
+            <i className="fa fa-refresh" aria-hidden="true"></i>
           </a>
         </div>
       </div>
-      <div className="product-info">
-        <div className="rating">{RatingStars}</div>
-        <h6>{product.title}</h6>
+      <div className="product-detail" onClick={clickProductDetail}>
+        <a href="#!">
+          <h6>{selectedLanguage === 'en' ? product.title : product.title_ar}</h6>
+        </a>
         <h4>
           {currency.symbol}
           {(
@@ -131,25 +87,53 @@ const ProductItem = ({
             currency.value
           ).toFixed(2)}
           <del>
-            <span className="money">
-              {currency.symbol}
-              {(product.price * currency.value).toFixed(2)}
-            </span>
+            {product.sale ? (
+              <span className="money">
+                {currency.symbol}
+                {(product.price * currency.value).toFixed(2)}
+              </span>
+            ) : null}
           </del>
         </h4>
       </div>
-      <Modal
-        isOpen={modal}
-        toggle={toggle}
-        className="quickview-modal"
-        size="lg"
-        centered>
+      <Modal isOpen={modalCompare} toggle={toggleCompare} size="lg" centered>
+        <ModalHeader toggle={toggleCompare}>{t('Quick View')}</ModalHeader>
+        <ModalBody>
+          <Row className="compare-modal">
+            <Col lg="12">
+              <div className="media">
+                <Media
+                  src={`${strapiBaseUrl}${product.images[0].url}`}
+                  alt=""
+                  className="img-fluid"
+                />
+                <div className="media-body align-self-center text-center">
+                  <h5>
+                    <i className="fa fa-check"></i>{t('item')}{" "}
+                    <span>{selectedLanguage === 'en' ? product.title : product.title_ar} </span>
+                    <span>{t('successfully added to your Compare list')}</span>
+                  </h5>
+                  <div className="buttons d-flex justify-content-center">
+                    <Link href="/page/compare" className="btn-sm btn-solid">
+                      {t('view_compare_list')}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </ModalBody>
+      </Modal>
+      <Modal isOpen={modal} toggle={toggle} className="quickview-modal" size="lg" centered>
+        <ModalHeader toggle={toggle}>
+          <h5 className="modal-title">{t('Quick View')}</h5>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col lg="6" xs="12">
               <div className="quick-view-img">
                 <Media
-                  src={product.images[0].src}
+                  src={`${strapiBaseUrl}${product.images[0].url}`}
                   alt=""
                   className="img-fluid"
                 />
@@ -157,7 +141,7 @@ const ProductItem = ({
             </Col>
             <Col lg="6" className="rtl-text">
               <div className="product-right">
-                <h2> {product.title} </h2>
+                <h2>{selectedLanguage === 'en' ? product.title : product.title_ar}</h2>
                 <h3>
                   {currency.symbol}
                   {(product.price * currency.value).toFixed(2)}
@@ -189,8 +173,8 @@ const ProductItem = ({
                   ""
                 )}
                 <div className="border-product">
-                  <h6 className="product-title">{t('product details')}</h6>
-                  <p>{product.description}</p>
+                  <h6 className="product-title">{t('product description')}</h6>
+                  <p>{selectedLanguage === 'en' ? product.description : product.description_ar}</p>
                 </div>
                 <div className="product-description border-product">
                   {product.size ? (
@@ -250,7 +234,7 @@ const ProductItem = ({
                   <button
                     className="btn btn-solid"
                     onClick={clickProductDetail}>
-                    {t('View detail')}
+                    {t('view detail')}
                   </button>
                 </div>
               </div>
@@ -262,5 +246,4 @@ const ProductItem = ({
   );
 };
 
-export default ProductItem;
-بط
+export default ProductBox;

@@ -1,15 +1,9 @@
 import React, { Fragment } from "react";
-import Slider from "react-slick";
 import {
-  Slider6,
   svgDiamond,
   svgEarings,
-  svgLongEarings,
   svgNeckles,
-  svgPearsing,
   svgRings,
-  svgTiara,
-  svgWatch,
 } from "../../../../services/script";
 import { Container, Row, Col } from "reactstrap";
 
@@ -17,48 +11,26 @@ const Data = [
   {
     img: svgRings,
     title: "rings",
-    desc: "23 items",
-    link: "#",
-  },
-  {
-    img: svgRings,
-    title: "rings",
-    desc: "23 items",
-    link: "#",
+    link: "http://localhost:3000/categories/14",
   },
   {
     img: svgDiamond,
     title: "diamonds",
-    desc: "54 items",
-    link: "#",
+    link: "http://localhost:3000/categories/23",
   },
   {
     img: svgNeckles,
-    title: "neckles",
-    desc: "15 items",
-    link: "#",
-  },
-  {
-    img: svgWatch,
-    title: "watches",
-    desc: "62 items",
-    link: "#",
-  },
-  {
-    img: svgPearsing,
-    title: "pearsing",
-    desc: "12 items",
-    link: "#",
+    title: "necklaces",
+    link: "http://localhost:3000/categories/15",
   },
   {
     img: svgEarings,
-    title: "earings",
-    desc: "21 items",
-    link: "#",
-  }
+    title: "earrings",
+    link: "http://localhost:3000/categories/17",
+  },
 ];
 
-const MasterCategory = ({ img, title, desc, link }) => {
+const MasterCategory = ({ img, title, link }) => {
   return (
     <div className="category-block">
       <a href={link}>
@@ -70,7 +42,6 @@ const MasterCategory = ({ img, title, desc, link }) => {
         <a href={link}>
           <h5>{title}</h5>
         </a>
-        <h6>{desc}</h6>
       </div>
     </div>
   );
@@ -82,21 +53,15 @@ const Category = () => {
       <Container>
         <section className="section-b-space border-section border-top-0">
           <Row>
-            <Col>
-              <Slider {...Slider6} className="slide-6 no-arrow">
-                {Data.map((data, i) => {
-                  return (
-                    <MasterCategory
-                      key={i}
-                      img={data.img}
-                      link={data.link}
-                      title={data.title}
-                      desc={data.desc}
-                    />
-                  );
-                })}
-              </Slider>
-            </Col>
+            {Data.map((data, i) => (
+              <Col sm="3" key={i}>
+                <MasterCategory
+                  img={data.img}
+                  link={data.link}
+                  title={data.title}
+                />
+              </Col>
+            ))}
           </Row>
         </section>
       </Container>

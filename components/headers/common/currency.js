@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { Media } from "reactstrap";
+import { useTranslation } from "react-i18next";
 import language from "../../constant/langConfig.json";
 import i18next from "../../constant/i18n";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
@@ -18,7 +18,8 @@ const GET_CURRENCY = gql`
 `;
 
 const Currency = ({ icon }) => {
-  var { data } = useQuery(GET_CURRENCY);
+  const { t } = useTranslation();
+  const { data } = useQuery(GET_CURRENCY);
   const Context = useContext(CurrencyContext);
   const selectedCurrency = Context.currencyContext.selectedCurrency;
 
@@ -35,7 +36,7 @@ const Currency = ({ icon }) => {
         <i className="fa fa-cog"></i>
       </div>
       <div className="show-div setting">
-        <h6>language</h6>
+        <h6>{t('language')}</h6>
         <ul>
           {language.map((item, i) => (
             <li key={i}>
@@ -44,12 +45,12 @@ const Currency = ({ icon }) => {
                 onClick={() => {
                   changeLanguage(item.val);
                 }}>
-                {item.lang}
+                {t(item.lang)}
               </a>
             </li>
           ))}
         </ul>
-        <h6>currency</h6>
+        <h6>{t('currency')}</h6>
         <ul className="list-inline">
           {data &&
             data.getCurrency.map((cur, i) => (

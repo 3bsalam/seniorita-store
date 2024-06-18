@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, Fragment } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
@@ -12,6 +12,9 @@ import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
 import { useTranslation } from "react-i18next";
 import Masonry from "react-masonry-css";
+import { Product5 } from "/root/seniorita_store/frontend/services/script";
+import i18next from "../../../components/constant/i18n";
+
 
 const GET_PRODUCTS = gql`
  
@@ -54,13 +57,7 @@ query products($isNew: Boolean, $isSale: Boolean) {
 }
 `;
 
-const TabContent = ({
-  data,
-  loading,
-  cartClass,
-  backImage,
-}) => {
-  const { t } = useTranslation();
+const TabContent = ({ data, col }) => {
   const cartContext = useContext(CartContext);
   const wishlistContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
@@ -68,6 +65,7 @@ const TabContent = ({
   const currency = curContext.state;
   const quantity = cartContext.quantity;
 
+  const selectedLanguage = i18next.language;
   const breakpointColumnsObj = {
     default: 4,
     1199: 3,
@@ -76,55 +74,34 @@ const TabContent = ({
   };
 
   return (
-    <Container fluid>
-      <Masonry
-        breakpointCols={breakpointColumnsObj}
-        className="isotopeContainer row"
-        columnClassName="isotopeSelector col-xl-3 col-lg-4 col-md-6 col-sm-6"
-      >
-        {!data ||
-        !data.products ||
-        data.products.length === 0 ||
-        loading ? (
-          data &&
-          data.products &&
-          data.products.length === 0 ? (
-            <div className="col-xs-12">
-              <div className="empty-cart-cls text-center">
-                <Media
-                  src={emptySearch}
-                  className="img-fluid mb-4 mx-auto"
-                  alt=""
+    <Fragment>
+      <section className="portfolio-section portfolio-padding metro-section port-col">
+        <Container fluid={col === "full"}>
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="isotopeContainer row"
+            columnClassName={`isotopeSelector ${col === "metro"
+              ? "col-xl-3 col-sm-6"
+              : "col-xl-2 col-lg-3 col-md-4 col-sm-6"
+              }`}
+          >
+            {data && data.products
+              .slice(0, 20)
+              .map((product, index) => (
+                <ProductBox
+                  product={product}
+                  category={product.category.id}
+                  addCart={() => cartContext.addToCart(product, quantity)}
+                  addWish={() => wishlistContext.addToWish(product)}
+                  addCompare={() => compareContext.addToCompare(product)}
+                  key={index}
+                  specialClass="special-product-box"
                 />
-                <h3>
-                  <strong>{t('Your Cart is Empty')}</strong>
-                </h3>
-                <h4>{t('Explore more shortlist some items.')}</h4>
-              </div>
-            </div>
-          ) : (
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
-                <PostLoader />
-              </div>
-            ))
-          )
-        ) : (
-          data.products.map((product, i) => (
-            <ProductBox
-              key={i}
-              product={product}
-              symbol={currency.symbol}
-              addCompare={() => compareContext.addToCompare(product)}
-              addCart={() => cartContext.addToCart(product, quantity)}
-              addWishlist={() => wishlistContext.addToWish(product)}
-              cartClass={cartClass}
-              backImage={backImage}
-            />
-          ))
-        )}
-      </Masonry>
-    </Container>
+              ))}
+          </Masonry>
+        </Container>
+      </section>
+    </Fragment>
   );
 };
 
@@ -150,7 +127,7 @@ const SpecialProducts = ({
   const currency = curContext.state;
   const quantity = context.quantity;
 
-  const filterVariables = activeTab == 'New' ? {isNew: true} : {isSale: true}
+  const filterVariables = activeTab === 'New' ? { isNew: true } : { isSale: true };
 
   var { loading, data } = useQuery(GET_PRODUCTS, {
     variables: filterVariables,
@@ -198,17 +175,20 @@ const SpecialProducts = ({
                 loading={loading}
                 cartClass={cartClass}
                 backImage={backImage}
+                col="full"
               />
             </TabPanel>
             <TabPanel>
               <TabContent
                 data={data}
-                loading={loading}
-                cartClass={cartClass}
-                backImage={backImage}
+                type="jewellery"
+                designClass="p-t-0 j-box ratio_square"
+                productSlider={Product5}
+                noSlider={true}
+                cartClass="cart-info cart-wrap"
+                col="full"
               />
             </TabPanel>
-
           </Tabs>
         </Container>
       </section>

@@ -12,6 +12,7 @@ const CartComponent = ({ icon, layout }) => {
   const total = context.cartTotal;
   const removeFromCart = context.removeFromCart;
   const [openSide, setOpenSide] = useState(false);
+  const strapiBaseUrl = process.env.STRAPI_ROOT_URL || 'http://localhost:1337';
 
   return (
     <Fragment>
@@ -54,7 +55,7 @@ const CartComponent = ({ icon, layout }) => {
                         <Media
                           alt=""
                           className="me-3"
-                          src={`${item.images[0].src}`}
+                          src={`${strapiBaseUrl}${item.images[0].url}`}
                         />
                       </a>
                       <div className="media-body">

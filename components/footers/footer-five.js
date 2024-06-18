@@ -3,10 +3,41 @@ import CopyRight from "./common/copyright";
 import { Container, Col, Row, Collapse } from "reactstrap";
 import {} from "../../services/script";
 import LogoImage from "./../headers/common/logo";
+import { gql, useMutation } from '@apollo/client';
+import { toast, ToastContainer } from "react-toastify";
 
-const FooterFive = ({ layoutClass, logoName }) => {
+const ADD_NEWSLETTER = gql`
+  mutation createNewsletter($email: String!) {
+    createNewsletter(input: { data: { email: $email } }) {
+      newsletter {
+        id
+        email
+      }
+    }
+  }
+`;
+
+
+const   FooterFive = ({ layoutClass, logoName }) => {
   const [isOpen, setIsOpen] = useState();
   const [collapse, setCollapse] = useState(0);
+  const [email, setEmail] = useState('');
+  const [addNewsletterEmail] = useMutation(ADD_NEWSLETTER);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    try {
+      await addNewsletterEmail({ variables: { email } });
+      toast.success("Subscription successful!");
+    } catch (error) {
+      if (error.message.includes("Duplicate entry")) {
+        toast.error("Email is already subscribed!");
+      } else {
+        console.error("Error subscribing to newsletter", error);
+        toast.error("Failed to subscribe!");
+      }
+    }
+  };
   const width = window.innerWidth <= 767;
   useEffect(() => {
     const changeCollapse = () => {
@@ -51,30 +82,30 @@ const FooterFive = ({ layoutClass, logoName }) => {
                           <div className="social-white">
                             <ul>
                               <li>
-                                <a href="https://www.facebook.com" target="_blank">
+                                <a href="https://www.facebook.com/profile.php?id=100064799717687" target="_blank">
                                   <i className="fa fa-facebook" aria-hidden="true"></i>
                                 </a>
                               </li>
-                              <li>
+                              {/* <li>
                                 <a href="https://plus.google.com" target="_blank">
                                   <i className="fa fa-google-plus" aria-hidden="true"></i>
                                 </a>
-                              </li>
-                              <li>
+                              </li> */}
+                              {/* <li>
                                 <a href="https://twitter.com" target="_blank">
                                   <i className="fa fa-twitter" aria-hidden="true"></i>
                                 </a>
-                              </li>
+                              </li> */}
                               <li>
-                                <a href="https://www.instagram.com" target="_blank">
+                                <a href="https://www.instagram.com/seniorita.jewelry" target="_blank">
                                   <i className="fa fa-instagram" aria-hidden="true"></i>
                                 </a>
                               </li>
-                              <li>
+                              {/* <li>
                                 <a href="https://rss.com" target="_blank">
                                   <i className="fa fa-rss" aria-hidden="true"></i>
                                 </a>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
                         </div>
@@ -86,9 +117,17 @@ const FooterFive = ({ layoutClass, logoName }) => {
                   <div className="footer-block">
                     <div className="subscribe-white">
                       <h2 className="text-white">newsletter</h2>
-                      <form>
+                      <form onSubmit={handleSubscribe}>
                         <div className="form-group">
-                          <input type="text" className="form-control" id="exampleFormControlInput" placeholder="Enter your email" />
+                          <input
+                            type="email"
+                            className="form-control"
+                            id="exampleFormControlInput"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
                           <button type="submit" className="btn btn-solid black-btn">
                             subscribe
                           </button>
@@ -149,38 +188,36 @@ const FooterFive = ({ layoutClass, logoName }) => {
                       <div className="footer-contant">
                         <ul>
                           <li>
-                            <a href="#">mens</a>
+                            <a href="/categories/14">Rings</a>
                           </li>
                           <li>
-                            <a href="#">womens</a>
+                            <a href="#">Necklaces</a>
                           </li>
                           <li>
-                            <a href="#">clothing</a>
+                            <a href="#">Bracelets</a>
                           </li>
                           <li>
-                            <a href="#">accessories</a>
+                            <a href="#">Earings</a>
                           </li>
                           <li>
-                            <a href="#">featured</a>
+                            <a href="#">Anklets</a>
                           </li>
                           <li>
-                            <a href="#">service</a>
+                            <a href="#">Hand</a>
                           </li>
                           <li>
-                            <a href="#">cart</a>
+                            <a href="#">Sets</a>
                           </li>
                           <li>
-                            <a href="#">my order</a>
+                            <a href="#">Diamonds</a>
                           </li>
                           <li>
-                            <a href="#">FAQ</a>
+                            <a href="#">About us</a>
                           </li>
                           <li>
-                            <a href="#">new product</a>
+                            <a href="#">Contact us</a>
                           </li>
-                          <li>
-                            <a href="#">featured product</a>
-                          </li>
+
                         </ul>
                       </div>
                     </Collapse>
@@ -190,7 +227,7 @@ const FooterFive = ({ layoutClass, logoName }) => {
             </section>
           </Container>
         </div>
-        <CopyRight layout={layoutClass} />
+        {/* <CopyRight layout={layoutClass} /> */}
       </footer>
     </Fragment>
   );

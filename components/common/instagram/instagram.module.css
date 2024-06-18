@@ -1,0 +1,17 @@
+.instagram-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .instagram-item {
+    flex: 1 1 calc(20% - 15px); /* Adjust based on how many images per row */
+    box-sizing: border-box;
+  }
+  
+  .instagram-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  

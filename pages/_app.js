@@ -13,6 +13,8 @@ import { CurrencyContextProvider } from "../helpers/Currency/CurrencyContext";
 import Helmet from "react-helmet";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../helpers/apollo";
+import '../components/common/instagram/instagram.module.css';
+
 
 export default function MyApp({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function MyApp({ Component, pageProps }) {
               {/* <Head>
               <link rel="icon" type="image/x-icon" href={favicon} />
             </Head> */}
-              <title>Multikart - Multi-purpopse E-commerce React Template</title>
+              <title>Seniorita Jewelry</title>
             </Helmet>
             <div>
               <SettingProvider>

@@ -5,11 +5,13 @@ import HeaderSeven from "/root/seniorita_store/frontend/components/headers/heade
 import Banner from "/root/seniorita_store/frontend/pages/layouts/Jewellery/Component/Banner";
 import Category from "/root/seniorita_store/frontend/pages/layouts/Jewellery/Component/Category";
 import TopCollection from "/root/seniorita_store/frontend/components/common/Collections/homepage_collection";
+import NewCollection from "/root/seniorita_store/frontend/components/common/Collections/homepage_collection2";
 import Service from "/root/seniorita_store/frontend/components/common/Service/service2";
 import SpecialProducts from "/root/seniorita_store/frontend/components/common/Collections/TabCollection1.js";
 import Instagram from "/root/seniorita_store/frontend/components/common/instagram/instagram2";
 import FooterFive from "/root/seniorita_store/frontend/components/footers/footer-five";
 import Paragraph from "/root/seniorita_store/frontend/components/common/Paragraph";
+import Paragraph2 from "/root/seniorita_store/frontend/components/common/Paragraph2";
 import { Product5 } from "/root/seniorita_store/frontend/services/script";
 import ModalComponent from "/root/seniorita_store/frontend/components/common/Modal";
 import MasterParallaxBanner from "/root/seniorita_store/frontend/temp layouts/Fashion/Components/MasterParallaxBanner";
@@ -33,7 +35,7 @@ const Jewellery = () => {
           <link rel="icon" type="image/x-icon" href={"/assets/images/favicon/favicon.png"} />
         </Helmet>
         <div className="bg_cls">
-          <ModalComponent />
+          {  /* hna hyb2a el video f component dh  <ModalComponent /> */}
           <HeaderSeven logoName={"logo/13.png"} />
           <Banner />
           <Category />
@@ -50,7 +52,7 @@ const Jewellery = () => {
             cartClass="cart-info cart-wrap"
             isTop={true} // Pass the isTop prop here
           />
-          <Service layoutClass="section-b-space" />
+          {/* <Service layoutClass="section-b-space" /> */}
           <MasterParallaxBanner
             bg="parallax-banner18"
             parallaxClass="text-center p-left"
@@ -58,18 +60,21 @@ const Jewellery = () => {
             subTitle1="fashion trends"
             subTitle2="special offer"
           />
-          <SpecialProducts
-            type="jewellery"
-            heading="exclusive products"
+        <Paragraph2
             title="title1  section-t-space title5"
             inner="title-inner1"
             hrClass={true}
+          />
+          <NewCollection
+            type="jewellery"
             designClass="p-t-0 j-box ratio_square"
+            productSlider={Product5}
             noSlider={true}
             cartClass="cart-info cart-wrap"
+            isNew={true} // Pass the isTop prop here
           />
           <section className="instagram ratio_square section-b-space">
-            <Instagram type="jewellery" />
+            <Instagram  />
           </section>
           <FooterFive logoName={"logo/13.png"} layoutClass="black-subfooter" />
         </div>
